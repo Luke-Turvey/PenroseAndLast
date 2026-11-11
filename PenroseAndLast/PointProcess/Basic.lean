@@ -10,7 +10,7 @@ public import Mathlib
 /-!
 # Point Processes
 
-This file develops the basic theory of point processes,
+This file introduces point processes as random counting measures,
 following Chapter 2 Lectures on the Poisson Process (2017)
 by Gunter Last and Matthew Penrose,
 -/
@@ -19,6 +19,9 @@ public section
 
 namespace PenroseAndLast
 
+open MeasureTheory
+
+open scoped ENNReal
 
 
 end PenroseAndLast

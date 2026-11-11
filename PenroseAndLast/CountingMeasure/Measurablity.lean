@@ -47,6 +47,19 @@ def CountingMeasure.generatingSets
   {E | ∃ (B : Set X) (k : ℕ),
     MeasurableSet B ∧ E = {μ : CountingMeasure X | μ.val B = (k : ENNReal)}}
 
+namespace CountingMeasure
+
+/-- Abbreviate the sigma algebra generated from the generating sets as
+    CountingMeasure.generateMeasurableSpace.
+    i.e. σ ({μ ∈ N(X) : μ(B) = k}: B ∈ χ, k ∈ ℕ }) -/
+abbrev generateMeasurableSpace
+    {X : Type*} [MeasurableSpace X] :
+    MeasurableSpace (CountingMeasure X) :=
+  MeasurableSpace.generateFrom (CountingMeasure.generatingSets X)
+
+end CountingMeasure
+
+
 /-- The sets {μ ∈ N(X) : μ(B) = k} ∀ B ∈ χ, k ∈ ℕ₀
  are measurable w.r.t 𝓝(X). -/
 theorem CountingMeasure.measurableSet_of_mem_generatingSets
@@ -63,7 +76,7 @@ theorem CountingMeasure.measurableSet_of_mem_generatingSets
 /-- σ ({μ ∈ N(X) : μ(B) = k}: B ∈ χ, k ∈ ℕ }) ⊆ 𝓝(X) -/
 theorem CountingMeasure.generateFrom_le
     (X : Type*) [MeasurableSpace X] :
-    MeasurableSpace.generateFrom (CountingMeasure.generatingSets X) ≤
+    CountingMeasure.generateMeasurableSpace ≤
       (inferInstance : MeasurableSpace (CountingMeasure X)) := by
   apply MeasurableSpace.generateFrom_le
   intro B hB
@@ -77,7 +90,7 @@ theorem CountingMeasure.measurableSet_eval_eq_nat
     (B : Set X)
     (hB : MeasurableSet B)
     (k : ℕ) :
-    MeasurableSet[MeasurableSpace.generateFrom (CountingMeasure.generatingSets X)]
+    MeasurableSet[CountingMeasure.generateMeasurableSpace]
      ({μ : CountingMeasure X | μ.val B = (k : ENNReal)}
       : Set  (CountingMeasure X)) := by
   apply MeasurableSpace.measurableSet_generateFrom
@@ -90,11 +103,9 @@ theorem CountingMeasure.measurableSet_eval_eq_inf
     {X : Type*} [MeasurableSpace X]
     (B : Set X)
     (hB : MeasurableSet B) :
-    MeasurableSet[MeasurableSpace.generateFrom (CountingMeasure.generatingSets X)]
+    MeasurableSet[CountingMeasure.generateMeasurableSpace]
      ({μ : CountingMeasure X | μ.val B = ∞}
       : Set  (CountingMeasure X)) := by
-  let h : MeasurableSpace (CountingMeasure X) :=
-    MeasurableSpace.generateFrom (CountingMeasure.generatingSets X)
   have h₁ : ({μ : CountingMeasure X | μ.val B = ∞}
         : Set  (CountingMeasure X))
       = (⋃ k : ℕ, ({μ : CountingMeasure X | μ.val B = (k : ENNReal)}
@@ -121,11 +132,11 @@ theorem CountingMeasure.measurableSet_eval_eq_inf
         Set.mem_ofPred_eq,
         not_exists
       ] at hν₂
-      rcases CountingMeasureIsENat ν.val ν.property B hB with
+      rcases CountingMeasure.apply_eq_nat_or_inf ν.val ν.property B hB with
         ⟨k, hk ⟩ | htop
       · exact (hν₂ k hk).elim
       · exact htop
-  have h₂ : MeasurableSet[MeasurableSpace.generateFrom (CountingMeasure.generatingSets X)]
+  have h₂ : MeasurableSet[CountingMeasure.generateMeasurableSpace]
       (⋃ k : ℕ, ({μ : CountingMeasure X | μ.val B = (k : ENNReal)}
         : Set  (CountingMeasure X))) := by
     apply MeasurableSet.iUnion
@@ -142,7 +153,7 @@ theorem CountingMeasure.measurableSet_eval_mem_of_inf_not_mem
     (hD : (∞ : ENNReal) ∉ D)
     (B : Set X)
     (hB : MeasurableSet B) :
-    MeasurableSet[MeasurableSpace.generateFrom (CountingMeasure.generatingSets X)]
+    MeasurableSet[CountingMeasure.generateMeasurableSpace]
       ({μ : CountingMeasure X | μ.val B ∈ D}
         : Set  (CountingMeasure X)) := by
   let indices : Set ℕ := {k | (k : ENNReal) ∈ D}
@@ -177,7 +188,7 @@ theorem CountingMeasure.measurableSet_eval_mem_of_inf_not_mem
         · intro hν₁
           change (ν.val B ∈ D ∧ ν.val B ≠ ∞) at hν₁
           apply Set.mem_iUnion.mpr
-          rcases CountingMeasureIsENat ν.val ν.property B hB with
+          rcases CountingMeasure.apply_eq_nat_or_inf ν.val ν.property B hB with
             ⟨k,hk⟩ | hinf
           · use k
             rw[hk] at hν₁
@@ -212,12 +223,12 @@ theorem CountingMeasure.measurableSet_eval_mem
     (D : Set ENNReal)
     (B : Set X)
     (hB : MeasurableSet B) :
-    MeasurableSet[MeasurableSpace.generateFrom (CountingMeasure.generatingSets X)]
+    MeasurableSet[CountingMeasure.generateMeasurableSpace]
       ({μ : CountingMeasure X | μ.val B ∈ D}
         : Set  (CountingMeasure X)) := by
   by_cases hinf : (∞ : ENNReal) ∉ D
   · exact CountingMeasure.measurableSet_eval_mem_of_inf_not_mem D hinf B hB
-  · have h₂ : MeasurableSet[MeasurableSpace.generateFrom (CountingMeasure.generatingSets X)]
+  · have h₂ : MeasurableSet[CountingMeasure.generateMeasurableSpace]
       ({μ : CountingMeasure X | μ.val B ∈ Dᶜ}
         : Set  (CountingMeasure X)) :=  by
       exact CountingMeasure.measurableSet_eval_mem_of_inf_not_mem Dᶜ hinf B hB
@@ -242,10 +253,8 @@ theorem CountingMeasure.measurable_eval_generateFrom
     {X : Type*} [ MeasurableSpace X]
     (B : Set X)
     (hB : MeasurableSet B) :
-    Measurable[MeasurableSpace.generateFrom (CountingMeasure.generatingSets X)]
+    Measurable[CountingMeasure.generateMeasurableSpace]
       (fun μ : CountingMeasure X => μ.val B) := by
-  let m : MeasurableSpace (CountingMeasure X) :=
-    MeasurableSpace.generateFrom (CountingMeasure.generatingSets X)
   apply Measurable.of_le_map
   intro D _
   exact CountingMeasure.measurableSet_eval_mem D B hB
@@ -254,7 +263,7 @@ theorem CountingMeasure.measurable_eval_generateFrom
 theorem CountingMeasure.le_generateFrom
     (X : Type*) [MeasurableSpace X] :
     (inferInstance : MeasurableSpace (CountingMeasure X)) ≤
-    MeasurableSpace.generateFrom (CountingMeasure.generatingSets X) := by
+    CountingMeasure.generateMeasurableSpace := by
   apply measurable_iff_comap_le.mp
   refine Measure.measurable_measure.mpr ?_
   intro B hB
@@ -264,7 +273,7 @@ theorem CountingMeasure.le_generateFrom
 theorem CountingMeasure.measurableSpace_eq_generateFrom
     (X : Type*) [MeasurableSpace X] :
     (inferInstance : MeasurableSpace (CountingMeasure X)) =
-      MeasurableSpace.generateFrom (CountingMeasure.generatingSets X) := by
+      CountingMeasure.generateMeasurableSpace := by
   apply le_antisymm
   · exact CountingMeasure.le_generateFrom X
   · exact CountingMeasure.generateFrom_le X

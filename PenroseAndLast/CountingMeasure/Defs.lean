@@ -114,6 +114,7 @@ theorem IsCountingMeasure.dirac
     (Measure.dirac x) (IsFiniteCountingMeasure.dirac x)
 
 /-- Define the dirac measure as a subtype of CountingMeasure -/
+@[expose]
 noncomputable def CountingMeasure.dirac
     {X : Type*} [MeasurableSpace X]
     (x : X) :

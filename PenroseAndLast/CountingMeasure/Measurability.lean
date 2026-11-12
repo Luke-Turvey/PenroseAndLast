@@ -250,7 +250,7 @@ theorem CountingMeasure.measurableSet_eval_mem
 /-- ∀ B ∈ χ, e_B : N(X) → [0,∞] defined by
     e_B(μ) := μ(B) is measurable w.r.t σ  ({μ ∈ N(X) : μ(B) = k}: B ∈ χ, k ∈ ℕ })) -/
 theorem CountingMeasure.measurable_eval_generateFrom
-    {X : Type*} [ MeasurableSpace X]
+    {X : Type*} [MeasurableSpace X]
     (B : Set X)
     (hB : MeasurableSet B) :
     Measurable[CountingMeasure.generateMeasurableSpace]
@@ -278,10 +278,30 @@ theorem CountingMeasure.measurableSpace_eq_generateFrom
   · exact CountingMeasure.le_generateFrom
   · exact CountingMeasure.generateFrom_le X
 
-/-- The map x ↦ δₓ is measurable -/
+/-- The map x ↦ δₓ is measurable.
+Proof:
+· apply Measure.measurable_measure theorem to refine to x ↦ δₓ(B)
+        measurable
+· indicator function is measurable -/
 theorem CountingMeasure.dirac_measurable
     {X : Type*} [MeasurableSpace X] :
     Measurable fun x : X => CountingMeasure.dirac x := by
-  sorry
+  apply Measurable.subtype_mk
+  apply Measure.measurable_measure.mpr
+  intro B hB
+  have hindicator :
+      Measurable (B.indicator (fun x : X => (1 : ENNReal))) :=
+    Measurable.indicator measurable_const hB
+  have h : (B.indicator (fun x : X => (1 : ENNReal))
+      = (fun x => (Measure.dirac x) B)) := by
+    funext x
+    change B.indicator (fun _ ↦ (1 : ENNReal)) x = (Measure.dirac x) B
+    rw[Measure.dirac_apply' x hB]
+    rfl
+  rw[←h]
+  exact hindicator
+
+
+
 
 end PenroseAndLast

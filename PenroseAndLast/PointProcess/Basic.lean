@@ -12,7 +12,8 @@ public import PenroseAndLast.CountingMeasure.Measurability
 /-!
 # Point Processes
 
-This file introduces point processes as random counting measures,
+This file introduces point processes as measurable maps from
+a "probability" space to the space of counting measures,
 following Chapter 2 Lectures on the Poisson Process (2017)
 by Gunter Last and Matthew Penrose,
 -/

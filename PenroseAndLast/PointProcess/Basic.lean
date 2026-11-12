@@ -91,6 +91,7 @@ noncomputable def PointProcess.onePoint_process
     PointProcess X Ω :=
   ⟨PointProcess.onePoint Y, IsPointProcess.onePoint_process Y hY⟩
 
+/-- Sum of two point processes is a point process -/
 theorem IsPointProcess.sum
     {X Ω : Type*}
     [MeasurableSpace X] [MeasurableSpace Ω]
@@ -100,6 +101,25 @@ theorem IsPointProcess.sum
     IsPointProcess (η + ξ : Ω → CountingMeasure X) := by
   exact Measurable.add hη hξ
 
+theorem IsPointProcess.zero
+    {X Ω : Type*}
+    [MeasurableSpace X] [MeasurableSpace Ω] :
+    IsPointProcess (0 : Ω → CountingMeasure X) := by
+  exact measurable_zero
+
+/-- Sum of n point processes is a point process -/
+theorem IsPointProcess.n_sum
+    {X Ω : Type*}
+    [MeasurableSpace X] [MeasurableSpace Ω]
+    (f : ℕ → (Ω → CountingMeasure X))
+    (hf : ∀ i : ℕ, IsPointProcess (f i))
+    (n : ℕ) :
+    IsPointProcess (∑ i ∈ Finset.range n, f i) := by
+  change Measurable (∑ i ∈ Finset.range n, f i)
+  rw [Finset.sum_fn]
+  apply Finset.measurable_sum
+  intro i hi
+  exact hf i
 
 
 

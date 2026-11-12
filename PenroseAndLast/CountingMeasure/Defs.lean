@@ -147,6 +147,44 @@ instance {X : Type*} [MeasurableSpace X] :
     ⟨μ.val + ν.val,
       IsCountingMeasure.add μ.val ν.val μ.property ν.property⟩
 
+/-- Instance of Zero for CountingMeasure X -/
+instance {X : Type*} [MeasurableSpace X] :
+    Zero (CountingMeasure X) where
+  zero := ⟨(0 : Measure X), IsCountingMeasure.zero⟩
+
+/-- Instance of AddCommMonoid for CountingMeasure X
+(inherited from Measure X). Note we need Add and Zero on CountingMeasure X
+ to use nsmulRec. There may be a better way to do this? -/
+instance {X : Type*} [MeasurableSpace X] :
+    AddCommMonoid (CountingMeasure X) where
+  add μ ν :=
+    ⟨μ.val + ν.val,
+      IsCountingMeasure.add μ.val ν.val μ.property ν.property⟩
+  zero := ⟨(0 : Measure X), IsCountingMeasure.zero⟩
+  add_assoc := by
+    intro μ ν ξ
+    apply Subtype.ext
+    exact add_assoc μ.val ν.val ξ.val
+  zero_add := by
+    intro μ
+    apply Subtype.ext
+    exact zero_add μ.val
+  add_zero := by
+    intro μ
+    apply Subtype.ext
+    exact add_zero μ.val
+  add_comm := by
+    intro μ ν
+    apply Subtype.ext
+    exact add_comm μ.val ν.val
+  nsmul := nsmulRec
+  nsmul_zero := by
+    intro a
+    rfl
+  nsmul_succ := by
+    intro n x
+    rfl
+
 
 /-- For f: ℕ → ℕ we have ∑_i ∈ ℕ, f(i) ∈ ℕ ∪ {∞}. -/
 theorem tsum_nat_eq_nat_or_inf

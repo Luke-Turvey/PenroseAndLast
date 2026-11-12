@@ -261,7 +261,7 @@ theorem CountingMeasure.measurable_eval_generateFrom
 
 /-- 𝓝(X) ≤ σ ({μ ∈ N(X) : μ(B) = k}: B ∈ χ, k ∈ ℕ }) -/
 theorem CountingMeasure.le_generateFrom
-    (X : Type*) [MeasurableSpace X] :
+    {X : Type*} [MeasurableSpace X] :
     (inferInstance : MeasurableSpace (CountingMeasure X)) ≤
     CountingMeasure.generateMeasurableSpace := by
   apply measurable_iff_comap_le.mp
@@ -271,12 +271,17 @@ theorem CountingMeasure.le_generateFrom
 
 /-- 𝓝(X) =  σ ({μ ∈ N(X) : μ(B) = k}: B ∈ χ, k ∈ ℕ }) -/
 theorem CountingMeasure.measurableSpace_eq_generateFrom
-    (X : Type*) [MeasurableSpace X] :
+    {X : Type*} [MeasurableSpace X] :
     (inferInstance : MeasurableSpace (CountingMeasure X)) =
       CountingMeasure.generateMeasurableSpace := by
   apply le_antisymm
-  · exact CountingMeasure.le_generateFrom X
+  · exact CountingMeasure.le_generateFrom
   · exact CountingMeasure.generateFrom_le X
 
+/-- The map x ↦ δₓ is measurable -/
+theorem CountingMeasure.dirac_measurable
+    {X : Type*} [MeasurableSpace X] :
+    Measurable fun x : X => CountingMeasure.dirac x := by
+  sorry
 
 end PenroseAndLast

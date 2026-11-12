@@ -118,7 +118,7 @@ noncomputable def CountingMeasure.dirac
     {X : Type*} [MeasurableSpace X]
     (x : X) :
     CountingMeasure X  :=
-    Subtype.mk (Measure.dirac x) (IsCountingMeasure.dirac x)
+    ⟨Measure.dirac x, IsCountingMeasure.dirac x⟩
 
 
 theorem IsCountingMeasure.add

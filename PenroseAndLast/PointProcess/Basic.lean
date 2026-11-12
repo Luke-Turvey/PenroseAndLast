@@ -63,9 +63,6 @@ theorem PointProcess.measurableSet_eval
   refine Measurable.eq_const ?_ k
   exact PointProcess.measurable_eval η hη B hB
 
-
-
-
 /-- Take a  map Y : Ω → X) and let δ_Y(ω) be the dirac measure at Y(ω).
 Note measurability of Y is not assumed in the definition -/
 noncomputable def PointProcess.onePoint
@@ -83,7 +80,7 @@ theorem IsPointProcess.onePoint_process
     (Y : Ω → X)
     (hY : Measurable Y) :
     IsPointProcess (fun ω => CountingMeasure.dirac (Y ω)) := by
-  sorry
+  exact Measurable.fun_comp CountingMeasure.dirac_measurable hY
 
 /-- Define the onePoint process as a subtype of PointProcess -/
 noncomputable def PointProcess.onePoint_process

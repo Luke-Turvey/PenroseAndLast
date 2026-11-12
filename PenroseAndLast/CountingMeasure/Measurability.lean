@@ -250,7 +250,7 @@ theorem CountingMeasure.measurableSet_eval_mem
 /-- ∀ B ∈ χ, e_B : N(X) → [0,∞] defined by
     e_B(μ) := μ(B) is measurable w.r.t σ  ({μ ∈ N(X) : μ(B) = k}: B ∈ χ, k ∈ ℕ })) -/
 theorem CountingMeasure.measurable_eval_generateFrom
-    {X : Type*} [ MeasurableSpace X]
+    {X : Type*} [MeasurableSpace X]
     (B : Set X)
     (hB : MeasurableSet B) :
     Measurable[CountingMeasure.generateMeasurableSpace]
@@ -261,7 +261,7 @@ theorem CountingMeasure.measurable_eval_generateFrom
 
 /-- 𝓝(X) ≤ σ ({μ ∈ N(X) : μ(B) = k}: B ∈ χ, k ∈ ℕ }) -/
 theorem CountingMeasure.le_generateFrom
-    (X : Type*) [MeasurableSpace X] :
+    {X : Type*} [MeasurableSpace X] :
     (inferInstance : MeasurableSpace (CountingMeasure X)) ≤
     CountingMeasure.generateMeasurableSpace := by
   apply measurable_iff_comap_le.mp
@@ -271,12 +271,57 @@ theorem CountingMeasure.le_generateFrom
 
 /-- 𝓝(X) =  σ ({μ ∈ N(X) : μ(B) = k}: B ∈ χ, k ∈ ℕ }) -/
 theorem CountingMeasure.measurableSpace_eq_generateFrom
-    (X : Type*) [MeasurableSpace X] :
+    {X : Type*} [MeasurableSpace X] :
     (inferInstance : MeasurableSpace (CountingMeasure X)) =
       CountingMeasure.generateMeasurableSpace := by
   apply le_antisymm
-  · exact CountingMeasure.le_generateFrom X
+  · exact CountingMeasure.le_generateFrom
   · exact CountingMeasure.generateFrom_le X
+
+/-- The map x ↦ δₓ is measurable.
+Proof:
+· apply Measure.measurable_measure theorem to refine to x ↦ δₓ(B)
+        measurable
+· indicator function is measurable -/
+theorem CountingMeasure.dirac_measurable
+    {X : Type*} [MeasurableSpace X] :
+    Measurable fun x : X => CountingMeasure.dirac x := by
+  apply Measurable.subtype_mk
+  apply Measure.measurable_measure.mpr
+  intro B hB
+  have hindicator :
+      Measurable (B.indicator (fun x : X => (1 : ENNReal))) :=
+    Measurable.indicator measurable_const hB
+  have h : (B.indicator (fun x : X => (1 : ENNReal))
+      = (fun x => (Measure.dirac x) B)) := by
+    funext x
+    change B.indicator (fun _ ↦ (1 : ENNReal)) x = (Measure.dirac x) B
+    rw[Measure.dirac_apply' x hB]
+    rfl
+  rw[←h]
+  exact hindicator
+
+/-- The map add : N(X) × N(X) → N(X) add(μ, ν)= μ + ν is measurable -/
+theorem CountingMeasure.measurable_add
+    {X : Type*} [MeasurableSpace X] :
+    Measurable (fun p : CountingMeasure X × CountingMeasure X
+      => p.1 + p.2) := by
+  apply Measurable.subtype_mk
+  have h₁ : Measurable
+      (fun p : CountingMeasure X × CountingMeasure X => p.1.val) :=
+    measurable_subtype_coe.comp measurable_fst
+  have h₂ : Measurable
+      (fun p : CountingMeasure X × CountingMeasure X => p.2.val) :=
+    measurable_subtype_coe.comp measurable_snd
+  exact h₁.add h₂
+
+/-- Instance of MeasurableAdd₂ for CountingMeasure X -/
+instance {X : Type*} [MeasurableSpace X] :
+    MeasurableAdd₂ (CountingMeasure X) where
+  measurable_add := CountingMeasure.measurable_add
+
+
+
 
 
 end PenroseAndLast

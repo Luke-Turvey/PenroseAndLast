@@ -113,6 +113,15 @@ theorem IsCountingMeasure.dirac
   exact IsCountingMeasure.of_isFiniteCountingMeasure
     (Measure.dirac x) (IsFiniteCountingMeasure.dirac x)
 
+/-- Define the dirac measure as a subtype of CountingMeasure -/
+@[expose]
+noncomputable def CountingMeasure.dirac
+    {X : Type*} [MeasurableSpace X]
+    (x : X) :
+    CountingMeasure X  :=
+    ⟨Measure.dirac x, IsCountingMeasure.dirac x⟩
+
+
 theorem IsCountingMeasure.add
     {X : Type*} [MeasurableSpace X]
     (μ ν : Measure X)
@@ -130,6 +139,51 @@ theorem IsCountingMeasure.add
   · simp_rw [hμs.2, hνs.2, Measure.sum_add_sum μs νs]
     apply Measure.sum_congr
     simp
+
+/-- Instance of Add for CountingMeasure X -/
+instance {X : Type*} [MeasurableSpace X] :
+    Add (CountingMeasure X) where
+  add μ ν :=
+    ⟨μ.val + ν.val,
+      IsCountingMeasure.add μ.val ν.val μ.property ν.property⟩
+
+/-- Instance of Zero for CountingMeasure X -/
+instance {X : Type*} [MeasurableSpace X] :
+    Zero (CountingMeasure X) where
+  zero := ⟨(0 : Measure X), IsCountingMeasure.zero⟩
+
+/-- Instance of AddCommMonoid for CountingMeasure X
+(inherited from Measure X). Note we need Add and Zero on CountingMeasure X
+ to use nsmulRec. There may be a better way to do this? -/
+instance {X : Type*} [MeasurableSpace X] :
+    AddCommMonoid (CountingMeasure X) where
+  add μ ν :=
+    ⟨μ.val + ν.val,
+      IsCountingMeasure.add μ.val ν.val μ.property ν.property⟩
+  zero := ⟨(0 : Measure X), IsCountingMeasure.zero⟩
+  add_assoc := by
+    intro μ ν ξ
+    apply Subtype.ext
+    exact add_assoc μ.val ν.val ξ.val
+  zero_add := by
+    intro μ
+    apply Subtype.ext
+    exact zero_add μ.val
+  add_zero := by
+    intro μ
+    apply Subtype.ext
+    exact add_zero μ.val
+  add_comm := by
+    intro μ ν
+    apply Subtype.ext
+    exact add_comm μ.val ν.val
+  nsmul := nsmulRec
+  nsmul_zero := by
+    intro a
+    rfl
+  nsmul_succ := by
+    intro n x
+    rfl
 
 
 /-- For f: ℕ → ℕ we have ∑_i ∈ ℕ, f(i) ∈ ℕ ∪ {∞}. -/
@@ -185,7 +239,6 @@ theorem CountingMeasure.apply_eq_nat_or_inf
     rw [hBsum,h₂]
 
 
-
 /-- For a measurable space (X,χ). Let the measurable space (N(X),𝓝(X))
 be the restriction of the measurable space of all measures on X
 (M(X),\MM(X)) to N(X). -/
@@ -194,5 +247,8 @@ instance {X : Type*} [MeasurableSpace X] :
   inferInstanceAs
     (MeasurableSpace
       { μ : Measure X // IsCountingMeasure μ})
+
+
+
 
 end PenroseAndLast

@@ -91,6 +91,16 @@ noncomputable def PointProcess.onePoint_process
     PointProcess X Ω :=
   ⟨PointProcess.onePoint Y, IsPointProcess.onePoint_process Y hY⟩
 
+theorem IsPointProcess.sum
+    {X Ω : Type*}
+    [MeasurableSpace X] [MeasurableSpace Ω]
+    (η ξ : Ω → CountingMeasure X)
+    (hη : IsPointProcess η)
+    (hξ : IsPointProcess ξ) :
+    IsPointProcess (η + ξ : Ω → CountingMeasure X) := by
+  exact Measurable.add hη hξ
+
+
 
 
 

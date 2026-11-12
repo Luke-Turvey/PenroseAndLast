@@ -301,6 +301,26 @@ theorem CountingMeasure.dirac_measurable
   rw[←h]
   exact hindicator
 
+/-- The map add : N(X) × N(X) → N(X) add(μ, ν)= μ + ν is measurable -/
+theorem CountingMeasure.measurable_add
+    {X : Type*} [MeasurableSpace X] :
+    Measurable (fun p : CountingMeasure X × CountingMeasure X
+      => p.1 + p.2) := by
+  apply Measurable.subtype_mk
+  have h₁ : Measurable
+      (fun p : CountingMeasure X × CountingMeasure X => p.1.val) :=
+    measurable_subtype_coe.comp measurable_fst
+  have h₂ : Measurable
+      (fun p : CountingMeasure X × CountingMeasure X => p.2.val) :=
+    measurable_subtype_coe.comp measurable_snd
+  exact h₁.add h₂
+
+/-- Instance of MeasurableAdd₂ for CountingMeasure X -/
+instance {X : Type*} [MeasurableSpace X] :
+    MeasurableAdd₂ (CountingMeasure X) where
+  measurable_add := CountingMeasure.measurable_add
+
+
 
 
 

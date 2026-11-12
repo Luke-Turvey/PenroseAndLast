@@ -140,6 +140,13 @@ theorem IsCountingMeasure.add
     apply Measure.sum_congr
     simp
 
+/-- Instance of Add for CountingMeasure X -/
+instance {X : Type*} [MeasurableSpace X] :
+    Add (CountingMeasure X) where
+  add μ ν :=
+    ⟨μ.val + ν.val,
+      IsCountingMeasure.add μ.val ν.val μ.property ν.property⟩
+
 
 /-- For f: ℕ → ℕ we have ∑_i ∈ ℕ, f(i) ∈ ℕ ∪ {∞}. -/
 theorem tsum_nat_eq_nat_or_inf

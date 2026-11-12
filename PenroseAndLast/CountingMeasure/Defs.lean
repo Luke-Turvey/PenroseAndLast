@@ -113,6 +113,14 @@ theorem IsCountingMeasure.dirac
   exact IsCountingMeasure.of_isFiniteCountingMeasure
     (Measure.dirac x) (IsFiniteCountingMeasure.dirac x)
 
+/-- Define the dirac measure as a subtype of CountingMeasure -/
+noncomputable def CountingMeasure.dirac
+    {X : Type*} [MeasurableSpace X]
+    (x : X) :
+    CountingMeasure X  :=
+    Subtype.mk (Measure.dirac x) (IsCountingMeasure.dirac x)
+
+
 theorem IsCountingMeasure.add
     {X : Type*} [MeasurableSpace X]
     (μ ν : Measure X)
@@ -185,7 +193,6 @@ theorem CountingMeasure.apply_eq_nat_or_inf
     rw [hBsum,h₂]
 
 
-
 /-- For a measurable space (X,χ). Let the measurable space (N(X),𝓝(X))
 be the restriction of the measurable space of all measures on X
 (M(X),\MM(X)) to N(X). -/
@@ -194,5 +201,8 @@ instance {X : Type*} [MeasurableSpace X] :
   inferInstanceAs
     (MeasurableSpace
       { μ : Measure X // IsCountingMeasure μ})
+
+
+
 
 end PenroseAndLast

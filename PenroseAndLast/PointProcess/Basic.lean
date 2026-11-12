@@ -66,6 +66,35 @@ theorem PointProcess.measurableSet_eval
 
 
 
+/-- Take a  map Y : Ω → X) and let δ_Y(ω) be the dirac measure at Y(ω).
+Note measurability of Y is not assumed in the definition -/
+noncomputable def PointProcess.onePoint
+    {X Ω : Type*}
+    [MeasurableSpace X] [MeasurableSpace Ω]
+    (Y : Ω → X) :
+    Ω → CountingMeasure X :=
+  fun ω => CountingMeasure.dirac (Y ω)
+
+/-- The one point function with the additional measurability assumption
+on Y is a point process. -/
+theorem IsPointProcess.onePoint_process
+    {X Ω : Type*}
+    [MeasurableSpace X] [MeasurableSpace Ω]
+    (Y : Ω → X)
+    (hY : Measurable Y) :
+    IsPointProcess (fun ω => CountingMeasure.dirac (Y ω)) := by
+  sorry
+
+/-- Define the onePoint process as a subtype of PointProcess -/
+noncomputable def PointProcess.onePoint_process
+    {X Ω : Type*}
+    [MeasurableSpace X] [MeasurableSpace Ω]
+    (Y : Ω → X)
+    (hY : Measurable Y) :
+    PointProcess X Ω :=
+  ⟨PointProcess.onePoint Y, IsPointProcess.onePoint_process Y hY⟩
+
+
 
 
 end PenroseAndLast
